@@ -31,21 +31,77 @@ public class WikiPhilosophy {
 		
         // some example code to get you started
 
-		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		Elements paragraphs = wf.fetchWikipedia(url);
+		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)"; //"https://en.wikipedia.org/wiki/Greek_language";
+        String ending = "https://en.wikipedia.org/wiki/Philosophy";
+        String urlstring = "";
+        boolean hashtag = true;
+        while (url.equals(ending) == false)
+        {
+            
+           // System.out.println("1: "+ url);
+            int foundfirst = 0;
+            hashtag = false;
+            Elements paragraphs = wf.fetchWikipedia(url);
+            Element firstPara = paragraphs.get(0);
+            //System.out.println("0: "+ firstPara.toString());
+            Iterable<Node> iter = new WikiNodeIterable(firstPara);
+            String url1=null;
+            boolean checkparen = false;
+            for (Node node: iter)
+            {
+                if (node instanceof TextNode)
+                {
+                                    
+                }
 
-		Element firstPara = paragraphs.get(0);
-		
-		Iterable<Node> iter = new WikiNodeIterable(firstPara);
-		for (Node node: iter) {
-			if (node instanceof TextNode) {
-				System.out.print(node);
-			}
+                if(node instanceof Element)
+                {
+                    Element element = (Element)node;
+                    if(element.tagName().equals("a"))
+                    {
+                        Elements parentelement = element.parents();
+                        boolean isitalic = false;
+                        for (Element italicelement: parentelement)
+                        {
+                            if(italicelement.tagName().equals("i") || italicelement.tagName().equals("em"))
+                            {
+                                isitalic = true;
+                            
+                            }
+                        }
+                        foundfirst++;
+                        if(isitalic == false && foundfirst == 1)
+                        {
+                            String endofurl = element.attr("href");
+                            String newstring = "https://en.wikipedia.org";
+                            if (endofurl.charAt(0) != '#')
+                            {
+                                urlstring = newstring + endofurl;
+                                hashtag = true;
+                            }
+                            url = urlstring;
+                            if ( hashtag == false)
+                            {
+                                foundfirst = 0;
+                            }
+
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+            
         }
-
+            }
+        }
+      //  }
+    
+    
         // the following throws an exception so the test fails
         // until you update the code
-        String msg = "Complete this lab by adding your code and removing this statement.";
-        throw new UnsupportedOperationException(msg);
+       // String msg = "Complete this lab by adding your code and removing this statement.";
+       // throw new UnsupportedOperationException(msg);
 	}
 }
